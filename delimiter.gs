@@ -22,7 +22,7 @@ function forEachRangeCell(range) {
         const T0 = range.getCell(j, 1);
         var packets = cell.getValue().split(";");
         var length = packets[1].split(",").length;
-        var toAdd = "{" + n0.getValue() + "*Reference!A1:A" + length + "," + T0.getValue() + "*Reference!A1:A" + length + ",Reference!B1:B" + length + ",ARRAYFORMULA(" + packets[0] + "*Reference!A1:A" + length + "),TRANSPOSE(SPLIT(INDEX(SPLIT(Delimited!" + cell.getA1Notation() + ",\";\"), 2),\",\"))};";
+        var toAdd = "{" + n0.getValue() + " * Reference!A1:A" + length + "^0, " + T0.getValue() + " * Reference!A1:A" + length + "^0, Reference!A1:A" + length + ", " + packets[0] + " * Reference!A1:A" + length + "^0, TRANSPOSE(SPLIT(INDEX(SPLIT(Delimited!" + cell.getA1Notation() + ", \";\"), 2), \",\")) / 100};";
         str += toAdd;
       }
     }
