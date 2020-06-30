@@ -20,8 +20,9 @@ function forEachRangeCell(range) {
       if (cell.getValue() != "") {
         const n0 = range.getCell(1, i);
         const T0 = range.getCell(j, 1);
-        var length = cell.getValue().split(", ").length;
-        var toAdd = "{{" + (n0.getValue() + "; ").repeat(length - 1) + n0.getValue() + "}, {" + (T0.getValue() + "; ").repeat(length - 1) + T0.getValue() + "}, {" + frames(length) + "}, TRANSPOSE(SPLIT(Delimited!" + cell.getA1Notation() + ", \", \"))};";
+        var packets = cell.getValue().split(";");
+        var length = packets[1].split(",").length;
+        var toAdd = "{" + n0.getValue() + "*Reference!A1:A" + length + "," + T0.getValue() + "*Reference!A1:A" + length + ",Reference!B1:B" + length + ",ARRAYFORMULA(" + packets[0] + "*Reference!A1:A" + length + "),TRANSPOSE(SPLIT(INDEX(SPLIT(Delimited!" + cell.getA1Notation() + ",\";\"), 2),\",\"))};";
         str += toAdd;
       }
     }
@@ -29,13 +30,4 @@ function forEachRangeCell(range) {
   str = str.substring(0, str.length - 1);
   str += "}, 3, TRUE)";
   return str;
-}
-
-function frames(num) {
-  var p = "";
-  for (var i = 1; i < num; i++) {
-    p += i.toString() + "; "
-  }
-  p += num.toString();
-  return p;
 }
