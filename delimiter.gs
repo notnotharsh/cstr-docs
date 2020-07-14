@@ -7,13 +7,15 @@ function getSheet(name) {
 function createFormula() {
   var range = getSheet("Delimited").getRange("A1:V22");
   var str = forEachRangeCell(range);
-  getSheet("logs").getRange("A2").setValue(str);
+  getSheet("ScrapLogs").getRange("B2").setValue(str);
 }
 
 function forEachRangeCell(range) {
   const numRows = range.getNumRows();
   const numCols = range.getNumColumns();
-  str = "=SORT({"
+  var str1 = "={({"
+  var sumstr = "";
+  var totalLength = 1;
   for (let i = 2; i <= numCols; i++) {
     for (let j = 2; j <= numRows; j++) {
       const cell = range.getCell(j, i);
@@ -21,13 +23,16 @@ function forEachRangeCell(range) {
         const n0 = range.getCell(1, i);
         const T0 = range.getCell(j, 1);
         var packets = cell.getValue().split(";");
-        var length = packets[1].split(",").length;
-        var toAdd = "{" + n0.getValue() + " * Reference!A1:A" + length + "^0, " + T0.getValue() + " * Reference!A1:A" + length + "^0, Reference!A1:A" + length + ", " + packets[0] + " * Reference!A1:A" + length + "^0, TRANSPOSE(SPLIT(INDEX(SPLIT(Delimited!" + cell.getA1Notation() + ", \";\"), 2), \",\")) / 100};";
-        str += toAdd;
+        var begin = packets[1].replace(" ", "");
+        var length = packets[2].split(",").length;
+        totalLength += length;
+        var toAdd = "{" + "ARRAYFORMULA(Reference!A" + begin + ":A" + (parseInt(length) + parseInt(begin) - 1) + "), ARRAYFORMULA(" + T0.getValue() + " * Reference!A" + begin + ":A" + (parseInt(length) + parseInt(begin) - 1) + "^0), ARRAYFORMULA(" + n0.getValue() + " * Reference!A" + begin + ":A" + (parseInt(length) + parseInt(begin) - 1) + "^0), ARRAYFORMULA(" + packets[0] + " * Reference!A" + begin + ":A" + (parseInt(length) + parseInt(begin) - 1) + "^0), ARRAYFORMULA(TRANSPOSE(SPLIT(INDEX(SPLIT(Delimited!" + cell.getA1Notation() + ", \";\"), 3), \",\")) / 100)}; ";
+        sumstr += toAdd;
       }
     }
   }
-  str = str.substring(0, str.length - 1);
-  str += "}, 3, TRUE)";
+  var str = str1 + sumstr;
+  str = str.substring(0, str.length - 2);
+  str += "})}";
   return str;
 }
