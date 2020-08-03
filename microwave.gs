@@ -7,7 +7,6 @@ function getSheet(name) {
 function returnParamsDefault() {
   var length = getSheet("Reference").getRange("B1").getValue();
   var range = getSheet("Reference").getRange("B2:C" + length).getValues();
-  console.log(range);
   return range;
 }
 
@@ -36,7 +35,6 @@ function forEachRangeCell(range) {
         rdevSTR += (parseFloat(newCellVal) / 100).toString() + "; ";
         var localParams = returnParamsDefault();
         if (paramsCellVal !== "") {
-          console.log(params);
           var count = 0;
           var toAdd = "{";
           for (var k = 0; k < localParams.length; k++) {
